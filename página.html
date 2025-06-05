@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App Scope 3</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; }
+    select, input, button { padding: 0.5rem; width: 100%; max-width: 400px; }
+    .btn-group { margin-top: 1rem; }
+    .data-table { border-collapse: collapse; margin-top: 2rem; width: 100%; }
+    .data-table th, .data-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    .chart-container { max-width: 800px; margin-top: 2rem; }
+    canvas { width: 100% !important; height: auto !important; }
+  </style>
+</head>
+<body>
+  <h1>Aplicativo Web Scope 3</h1>
+  <div id="role-selection" class="step active">
+    <div class="form-group">
+      <label>¿Qué tipo de usuario eres?</label>
+      <button onclick="selectRole('emisor')">Soy Emisor</button>
+      <button onclick="selectRole('receptor')">Soy Gran Receptor</button>
+    </div>
+  </div>
+  <div id="emisor-form" class="step">
+    <h2>Registro de Actividad</h2>
+    <form id="actividad-form">
+      <div class="form-group">
+        <label for="empresa">Nombre de la empresa</label>
+        <input type="text" id="empresa" required />
+      </div>
+      <div class="form-group">
+        <label for="actividad">Selecciona una actividad de Scope 3</label>
+        <select id="actividad" required onchange="mostrarFormularioDinamico(this.value)">
+          <option value="">Selecciona una opción</option>
+          <option value="transporte">Transporte</option>
+          <option value="residuos">Manejo de residuos</option>
+        </select>
+      </div>
+      <div id="form-dinamico"></div>
+      <div class="form-group">
+        <label for="mes">Mes</label>
+        <select id="mes" required></select>
+      </div>
+      <button type="submit">Enviar</button>
+    </form>
+    <button onclick="volverAlMenu()">Volver al menú principal</button>
+  </div>
+  <div id="receptor-panel" class="step">
+    <h2>Panel del Gran Receptor</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Empresa</th>
+          <th>Actividad</th>
+          <th>Tipo Transporte</th>
+          <th>Dirección Transporte</th>
+          <th>Distancia (km)</th>
+          <th>Carga (kg)</th>
+          <th>Tipo Residuo</th>
+          <th>Cantidad (kg)</th>
+          <th>Mes</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="receptor-data"></tbody>
+    </table>
+    <div class="chart-container">
+      <canvas id="graficoTransporte"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="graficoResiduos"></canvas>
+    </div>
+    <button onclick="volverAlMenu()">Volver al menú principal</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+    function selectRole(role) {
+      document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+      if (role === 'emisor') {
+        document.getElementById('emisor-form').classList.add('active');
+      } else {
+        document.getElementById('receptor-panel').classList.add('active');
+        renderReceptorData();
+        renderCharts();
+      }
+    }
+
+    function volverAlMenu() {
+      document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+      document.getElementById('role-selection').classList.add('active');
+    }
+
+    function mostrarFormularioDinamico(actividad) {
+      const contenedor = document.getElementById('form-dinamico');
+      contenedor.innerHTML = '';
+      if (actividad === 'transporte') {
+        contenedor.innerHTML = `
+          <div class="form-group">
+            <label for="tipo_transporte">Tipo de transporte</label>
+            <select id="tipo_transporte">
+              <option value="Terrestre">Terrestre</option>
+              <option value="Aéreo">Aéreo</option>
+              <option value="Marítimo">Marítimo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="direccion_transporte">Dirección (Upstream/Downstream)</label>
+            <select id="direccion_transporte">
+              <option value="Upstream">Upstream</option>
+              <option value="Downstream">Downstream</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="distancia">Distancia (km)</label>
+            <input type="number" id="distancia" required />
+          </div>
+          <div class="form-group">
+            <label for="peso">Carga transportada (kg)</label>
+            <input type="number" id="peso" required />
+          </div>
+        `;
+      } else if (actividad === 'residuos') {
+        contenedor.innerHTML = `
+          <div class="form-group">
+            <label for="tipo_residuo">Tipo de residuo</label>
+            <select id="tipo_residuo">
+              <option value="Orgánico">Orgánico</option>
+              <option value="Plástico">Plástico</option>
+              <option value="Peligroso">Peligroso</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cantidad">Cantidad generada (kg)</label>
+            <input type="number" id="cantidad" required />
+          </div>
+        `;
+      }
+    }
+
+    function renderMeses() {
+      const select = document.getElementById('mes');
+      meses.forEach((mes, i) => {
+        const option = document.createElement('option');
+        option.value = i + 1;
+        option.textContent = mes;
+        select.appendChild(option);
+      });
+    }
+
+    function getMonthName(index) {
+      return meses[parseInt(index) - 1];
+    }
+
+    function getRegistros() {
+      return JSON.parse(localStorage.getItem('registros') || '[]');
+    }
+
+    function setRegistros(data) {
+      localStorage.setItem('registros', JSON.stringify(data));
+    }
+
+    function eliminarRegistro(index) {
+      const registros = getRegistros();
+      registros.splice(index, 1);
+      setRegistros(registros);
+      renderReceptorData();
+      renderCharts();
+    }
+
+    function renderReceptorData() {
+      const tbody = document.getElementById('receptor-data');
+      tbody.innerHTML = '';
+      const registros = getRegistros();
+      registros.forEach((reg, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${reg.empresa || '-'}</td>
+          <td>${reg.actividad}</td>
+          <td>${reg.tipo_transporte || '-'}</td>
+          <td>${reg.direccion_transporte || '-'}</td>
+          <td>${reg.distancia || '-'}</td>
+          <td>${reg.peso || '-'}</td>
+          <td>${reg.tipo_residuo || '-'}</td>
+          <td>${reg.cantidad || '-'}</td>
+          <td>${getMonthName(reg.mes)}</td>
+          <td><button onclick="eliminarRegistro(${index})">Eliminar</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderCharts() {
+      const registros = getRegistros();
+      const mesesEtiquetas = meses;
+
+      const empresas = [...new Set(registros.map(r => r.empresa))];
+      const colores = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
+
+      const transporteDatasets = empresas.map((empresa, i) => {
+        const dataKg = Array(12).fill(0);
+        const dataKm = Array(12).fill(0);
+        registros.filter(r => r.empresa === empresa && r.actividad === 'transporte').forEach(r => {
+          const mesIdx = parseInt(r.mes) - 1;
+          dataKg[mesIdx] += parseFloat(r.peso) || 0;
+          dataKm[mesIdx] += parseFloat(r.distancia) || 0;
+        });
+        return [
+          { label: `${empresa} (kg)`, data: dataKg, yAxisID: 'y1', backgroundColor: colores[i % colores.length], type: 'bar' },
+          { label: `${empresa} (km)`, data: dataKm, yAxisID: 'y2', borderColor: colores[i % colores.length], backgroundColor: 'transparent', type: 'line' }
+        ];
+      }).flat();
+
+      const residuosPorTipo = {};
+      registros.filter(r => r.actividad === 'residuos').forEach(r => {
+        const key = `${r.empresa} - ${r.tipo_residuo}`;
+        const mesIndex = parseInt(r.mes) - 1;
+        if (!residuosPorTipo[key]) residuosPorTipo[key] = Array(12).fill(0);
+        residuosPorTipo[key][mesIndex] += parseFloat(r.cantidad) || 0;
+      });
+
+      const residuosDatasets = Object.entries(residuosPorTipo).map(([label, data], i) => ({
+        label,
+        data,
+        borderColor: colores[i % colores.length],
+        backgroundColor: colores[i % colores.length],
+        fill: false,
+        tension: 0.3
+      }));
+
+      if (window.transporteChart) window.transporteChart.destroy();
+      if (window.residuosChart) window.residuosChart.destroy();
+
+      const ctx1 = document.getElementById('graficoTransporte').getContext('2d');
+      window.transporteChart = new Chart(ctx1, {
+        data: {
+          labels: mesesEtiquetas,
+          datasets: transporteDatasets
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y1: { beginAtZero: true, position: 'left', title: { display: true, text: 'Kg' } },
+            y2: { beginAtZero: true, position: 'right', title: { display: true, text: 'Km' }, grid: { drawOnChartArea: false } },
+            x: { title: { display: true, text: 'Mes' } }
+          }
+        }
+      });
+
+      const ctx2 = document.getElementById('graficoResiduos').getContext('2d');
+      window.residuosChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: mesesEtiquetas,
+          datasets: residuosDatasets
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Cantidad (kg)' } },
+            x: { title: { display: true, text: 'Mes' } }
+          }
+        }
+      });
+    }
+
+    document.getElementById('actividad-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = {
+        empresa: document.getElementById('empresa').value,
+        actividad: document.getElementById('actividad').value,
+        mes: document.getElementById('mes').value
+      };
+      document.querySelectorAll('#form-dinamico input, #form-dinamico select').forEach(el => {
+        data[el.id] = el.value;
+      });
+      const registros = getRegistros();
+      registros.push(data);
+      setRegistros(registros);
+      alert('Datos registrados con éxito.');
+      document.getElementById('actividad-form').reset();
+      document.getElementById('form-dinamico').innerHTML = '';
+    });
+
+    renderMeses();
+  </script>
+</body>
+</html>

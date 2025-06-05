@@ -14,8 +14,9 @@
     .btn-group { margin-top: 1rem; }
     .data-table { border-collapse: collapse; margin-top: 2rem; width: 100%; }
     .data-table th, .data-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    .chart-container { max-width: 800px; margin-top: 2rem; }
+    .chart-container { max-width: 800px; margin-top: 2rem; position: relative; }
     canvas { width: 100% !important; height: auto !important; }
+    .legend-box { position: absolute; top: 0; right: -200px; width: 180px; background: #f8f8f8; border: 1px solid #ccc; padding: 10px; }
   </style>
 </head>
 <body>
@@ -72,9 +73,11 @@
     </table>
     <div class="chart-container">
       <canvas id="graficoTransporte"></canvas>
+      <div class="legend-box" id="legendTransporte"></div>
     </div>
     <div class="chart-container">
       <canvas id="graficoResiduos"></canvas>
+      <div class="legend-box" id="legendResiduos"></div>
     </div>
     <button onclick="volverAlMenu()">Volver al menú principal</button>
   </div>
@@ -175,6 +178,27 @@
       renderCharts();
     }
 
+    function toggleDataset(chart, index, checkbox) {
+      chart.getDatasetMeta(index).hidden = !checkbox.checked;
+      chart.update();
+    }
+
+    function createLegend(chart, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      chart.data.datasets.forEach((ds, i) => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = true;
+        checkbox.onchange = () => toggleDataset(chart, i, checkbox);
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + ds.label));
+        container.appendChild(label);
+        container.appendChild(document.createElement('br'));
+      });
+    }
+
     function renderReceptorData() {
       const tbody = document.getElementById('receptor-data');
       tbody.innerHTML = '';
@@ -202,7 +226,7 @@
       const mesesEtiquetas = meses;
 
       const empresas = [...new Set(registros.map(r => r.empresa))];
-      const colores = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
+      const colores = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
       const transporteDatasets = empresas.map((empresa, i) => {
         const dataKg = Array(12).fill(0);
@@ -269,6 +293,9 @@
           }
         }
       });
+
+      createLegend(window.transporteChart, 'legendTransporte');
+      createLegend(window.residuosChart, 'legendResiduos');
     }
 
     document.getElementById('actividad-form').addEventListener('submit', function(e) {

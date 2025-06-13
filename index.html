@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>App Scope 3</title>
   <style>
+      
     body { font-family: Arial, sans-serif; margin: 20px; }
     .step { display: none; }
     .step.active { display: block; }
@@ -17,24 +18,106 @@
     .chart-container { max-width: 800px; margin-top: 2rem; position: relative; }
     canvas { width: 100% !important; height: auto !important; }
     .legend-box { position: absolute; top: 0; right: -200px; width: 180px; background: #f8f8f8; border: 1px solid #ccc; padding: 10px; }
+  
+  button {
+  background-color: #96CF28;
+  color: white;
+  border: none;
+  border-radius: 80px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+    .logo-fixed {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  width: 250px; /* Ajusta el tamaño si es necesario */
+  height: auto;
+  z-index: 1000;
+  opacity: 0.9;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto; /* Esto centra horizontalmente */
+  text-align: center; 
+}
+
+.presentacion-formulario {
+  color: #000000;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center; 
+  line-height: 150%;     /* 150% del tamaño de fuente */
+  
+}
+
+.titulo-formulario {
+  color: #29ac97;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center; 
+  line-height: 250%;     /* 150% del tamaño de fuente */
+}
+
+.titulo-panel {
+  color: #000000;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center; 
+  line-height: 150%;     /* 150% del tamaño de fuente */
+}
+
+.subtitulo {
+  font-weight: bold;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: center; 
+  line-height: 700%;     /* 150% del tamaño de fuente */
+}
+
+.botones-usuario {
+  display: flex;
+  justify-content: center;
+  gap: 75px;
+  flex-wrap: wrap;
+}
+
+.botones-usuario button {
+  min-width: 150px;
+}
+
+
   </style>
 </head>
 <body>
-  <h1>Aplicativo Web Scope 3</h1>
+
+    <div class="container"></div>
+        <h1 class="presentacion-formulario" style="color: #29ac97;">Aplicativo Web Scope 3 - By Comsu Solutions</h1>
   <div id="role-selection" class="step active">
     <div class="form-group">
-      <label>¿Qué tipo de usuario eres?</label>
-      <button onclick="selectRole('emisor')">Soy Emisor</button>
-      <button onclick="selectRole('receptor')">Soy Gran Receptor</button>
-    </div>
+  <h2 class="titulo-formulario">Formulario Integral de Información para Emisores</h2>
+  <p class="subtitulo">¿Qué tipo de usuario eres?</p>
+  <div class="botones-usuario">
+    <button onclick="selectRole('emisor')">SOY EMISOR</button>
+    <button onclick="selectRole('receptor')">SOY GRAN RECEPTOR</button>
+  </div>
+</div>
   </div>
   <div id="emisor-form" class="step">
-    <h2>Registro de Actividad</h2>
+    <h1 class ="titulo-formulario">Formulario Integral de Información para Emisores</h1>
+    <h2 class="titulo-panel">Panel de emisor</h2>
     <form id="actividad-form">
       <div class="form-group">
         <label for="empresa">Nombre de la empresa</label>
         <input type="text" id="empresa" required />
       </div>
+      <div class="form-group">
+        <label for="empresa_receptora">Empresa a la que se reporta (Gran Receptor)</label>
+         <input type="text" id="empresa_receptora" required />
+      </div>
+
       <div class="form-group">
         <label for="actividad">Selecciona una actividad de Scope 3</label>
         <select id="actividad" required onchange="mostrarFormularioDinamico(this.value)">
@@ -53,11 +136,18 @@
     <button onclick="volverAlMenu()">Volver al menú principal</button>
   </div>
   <div id="receptor-panel" class="step">
-    <h2>Panel del Gran Receptor</h2>
-    <table class="data-table">
+     <h2 class="titulo-panel">Panel del Gran Receptor</h2>
+    <div class="form-group">
+     <label for="filtroEmpresaReceptora">Elige tu empresa</label>
+      <select id="filtroEmpresaReceptora" onchange="renderReceptorData()">
+      <option value="">Todas</option>
+    </select>
+    </div>
+        <table class="data-table">
       <thead>
         <tr>
-          <th>Empresa</th>
+          <th>Empresa Emisora</th>
+          <th>Empresa Receptora</th>
           <th>Actividad</th>
           <th>Tipo Transporte</th>
           <th>Dirección Transporte</th>
@@ -157,7 +247,7 @@
         select.appendChild(option);
       });
     }
-
+  
     function getMonthName(index) {
       return meses[parseInt(index) - 1];
     }
@@ -200,26 +290,46 @@
     }
 
     function renderReceptorData() {
-      const tbody = document.getElementById('receptor-data');
-      tbody.innerHTML = '';
-      const registros = getRegistros();
-      registros.forEach((reg, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${reg.empresa || '-'}</td>
-          <td>${reg.actividad}</td>
-          <td>${reg.tipo_transporte || '-'}</td>
-          <td>${reg.direccion_transporte || '-'}</td>
-          <td>${reg.distancia || '-'}</td>
-          <td>${reg.peso || '-'}</td>
-          <td>${reg.tipo_residuo || '-'}</td>
-          <td>${reg.cantidad || '-'}</td>
-          <td>${getMonthName(reg.mes)}</td>
-          <td><button onclick="eliminarRegistro(${index})">Eliminar</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+  const tbody = document.getElementById('receptor-data');
+  const filtro = document.getElementById('filtroEmpresaReceptora').value;
+  tbody.innerHTML = '';
+  const registros = getRegistros();
+
+  const empresasReceptoras = [...new Set(registros.map(r => r.empresa_receptora))];
+  const filtroSelect = document.getElementById('filtroEmpresaReceptora');
+  filtroSelect.innerHTML = '<option value="">-- Todas --</option>';
+  empresasReceptoras.forEach(emp => {
+    const option = document.createElement('option');
+    option.value = emp;
+    option.textContent = emp;
+    filtroSelect.appendChild(option);
+  });
+
+  const registrosFiltrados = filtro ? registros.filter(r => r.empresa_receptora === filtro) : registros;
+
+  const formatNumber = (value) => {
+    if (!value || isNaN(value)) return '-';
+    return new Intl.NumberFormat('es-CO').format(parseFloat(value));
+  };
+
+  registrosFiltrados.forEach((reg, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${reg.empresa || '-'}</td>
+      <td>${reg.empresa_receptora || '-'}</td>
+      <td>${reg.actividad}</td>
+      <td>${reg.tipo_transporte || '-'}</td>
+      <td>${reg.direccion_transporte || '-'}</td>
+      <td>${formatNumber(reg.distancia)}</td>
+      <td>${formatNumber(reg.peso)}</td>
+      <td>${reg.tipo_residuo || '-'}</td>
+      <td>${formatNumber(reg.cantidad)}</td>
+      <td>${getMonthName(reg.mes)}</td>
+      <td><button onclick="eliminarRegistro(${index})">Eliminar</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
     function renderCharts() {
       const registros = getRegistros();
@@ -273,7 +383,12 @@
           scales: {
             y1: { beginAtZero: true, position: 'left', title: { display: true, text: 'Kg' } },
             y2: { beginAtZero: true, position: 'right', title: { display: true, text: 'Km' }, grid: { drawOnChartArea: false } },
-            x: { title: { display: true, text: 'Mes' } }
+            x: {
+              title: { display: true, text: 'Mes' },
+              ticks: {
+                autoSkip: false
+              }
+            }
           }
         }
       });
@@ -289,7 +404,12 @@
           responsive: true,
           scales: {
             y: { beginAtZero: true, title: { display: true, text: 'Cantidad (kg)' } },
-            x: { title: { display: true, text: 'Mes' } }
+            x: {
+              title: { display: true, text: 'Mes' },
+              ticks: {
+                autoSkip: false
+              }
+            }
           }
         }
       });
@@ -302,9 +422,10 @@
       e.preventDefault();
       const data = {
         empresa: document.getElementById('empresa').value,
+        empresa_receptora: document.getElementById('empresa_receptora').value,
         actividad: document.getElementById('actividad').value,
         mes: document.getElementById('mes').value
-      };
+    };
       document.querySelectorAll('#form-dinamico input, #form-dinamico select').forEach(el => {
         data[el.id] = el.value;
       });
@@ -318,5 +439,7 @@
 
     renderMeses();
   </script>
+    </div>
+    <img src="logo.jpg" alt="Logo" class="logo-fixed">
 </body>
 </html>

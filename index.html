@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App Scope 3</title>
+  <title>App Scope 3 by Comsu Solutions</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     .step { display: none; }
@@ -16,33 +16,71 @@
     .data-table th, .data-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     .chart-container { max-width: 800px; margin-top: 2rem; }
     canvas { width: 100% !important; height: auto !important; }
+
+  .button {
+  background-color: #96CF28;
+  color: white;
+  border: none;
+  border-radius: 80px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  }
+    .logo-fixed {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  width: 250px; 
+  height: auto;
+  z-index: 1000;
+  opacity: 0.9;
+  }
+.titulo-formulario {
+  color: #29ac97;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center; 
+  line-height: 250%;
+}
+
   </style>
 </head>
 <body>
-  <h1>Aplicativo Web Scope 3</h1>
+
+    
+  <h1 class="presentacion-formulario">Aplicativo Web Scope 3 - By Comsu Solutions</h1>
   <div id="role-selection" class="step active">
     <div class="form-group">
       <label>¿Qué tipo de usuario eres?</label>
-      <button onclick="selectRole('emisor')">Soy Emisor</button>
-      <button onclick="selectRole('receptor')">Soy Gran Receptor</button>
+      <button class="button" onclick="selectRole('emisor')">Soy Emisor</button>
+      <button class="button" onclick="selectRole('receptor')">Soy Gran Receptor</button>
     </div>
   </div>
   <div id="emisor-user-selection" class="step">
   <h2>¿Eres un nuevo usuario o ya estás registrado?</h2>
-  <button onclick="mostrarFormularioNuevoUsuario()">Usuario nuevo</button>
-  <button onclick="mostrarFormularioUsuarioRegistrado()">Usuario registrado</button>
+  <button class="button" onclick="mostrarFormularioNuevoUsuario()">Usuario nuevo</button>
+  <button class="button" onclick="mostrarFormularioUsuarioRegistrado()">Usuario registrado</button>
   <br><br>
-  <button onclick="volverAlMenu()">Volver al menú principal</button>
+  <button class="button" onclick="volverAlMenu()">Volver al menú principal</button>
 </div>
 
 <div id="nuevo-usuario-form" class="step">
   <h3>Registro de nueva empresa emisora</h3>
   <div class="form-group">
-    <label for="nuevaEmpresa">Nombre de la nueva empresa</label>
+    <label for="nuevaEmpresa">Nombre de la empresa emisora a registrar</label>
     <input type="text" id="nuevaEmpresa" required />
+    <label for="nuevonit">Número NIT de la empresa</label>
+    <input type="text" id="nuevonit" required />
+    <label for="tipoempresa">Selecciona el tamaño de tu empresa</label>
+        <select id="tipoempresa" required onchange="mostrarFormularioDinamico(this.value)">
+          <option value="">Selecciona una opción</option>
+          <option value="epequeña">Pequeña, 0 - 50 empleados</option>
+          <option value="emediana">Mediana, 51-200 empleados</option>
+          <option value="egrande">Grande, > 200 empleados</option>
+        </select>
   </div>
-  <button onclick="registrarNuevaEmpresa()">Siguiente</button>
-  <button type="button" onclick="volverAlMenu()">Volver al menú principal</button>
+  <button class="button" onclick="registrarNuevaEmpresa()">Siguiente</button>
+  <button class="button" type="button" onclick="volverAlMenu()">Volver al menú principal</button>
 </div>
 
 <div id="seleccionar-usuario-registrado" class="step">
@@ -50,7 +88,7 @@
   <div class="form-group">
     <select id="empresaSeleccionada"></select>
   </div>
-  <button onclick="continuarComoEmpresaRegistrada()">Siguiente</button>
+  <button class="button" onclick="continuarComoEmpresaRegistrada()">Siguiente</button>
 </div>
 
   <div id="emisor-form" class="step">
@@ -77,9 +115,9 @@
         <label for="mes">Mes</label>
         <select id="mes" required></select>
       </div>
-      <button type="submit">Enviar</button>
+      <button class="button" type="submit">Enviar</button>
     </form>
-    <button onclick="volverAlMenu()">Volver al menú principal</button>
+    <button class="button" onclick="volverAlMenu()">Volver al menú principal</button>
   </div>
   <div id="receptor-panel" class="step">
     <h2>Panel del Gran Receptor</h2>
@@ -112,7 +150,7 @@
 <canvas id="graficoKgTransportados"></canvas>
       <canvas id="graficoResiduos"></canvas>
           </div>
-    <button onclick="volverAlMenu()">Volver al menú principal</button>
+    <button class="button" onclick="volverAlMenu()">Volver al menú principal</button>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -410,5 +448,6 @@ function mostrarSoloPaso(id) {
       document.getElementById('form-dinamico').innerHTML = '';
     });
   </script>
+  <img src="logo.jpg" alt="Logo" class="logo-fixed">
 </body>
 </html>

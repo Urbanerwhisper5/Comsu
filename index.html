@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>App Scope 3</title>
   <style>
-      
     body { font-family: Arial, sans-serif; margin: 20px; }
     .step { display: none; }
     .step.active { display: block; }
@@ -15,109 +14,56 @@
     .btn-group { margin-top: 1rem; }
     .data-table { border-collapse: collapse; margin-top: 2rem; width: 100%; }
     .data-table th, .data-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    .chart-container { max-width: 800px; margin-top: 2rem; position: relative; }
+    .chart-container { max-width: 800px; margin-top: 2rem; }
     canvas { width: 100% !important; height: auto !important; }
-    .legend-box { position: absolute; top: 0; right: -200px; width: 180px; background: #f8f8f8; border: 1px solid #ccc; padding: 10px; }
-  
-  button {
-  background-color: #96CF28;
-  color: white;
-  border: none;
-  border-radius: 80px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-weight: bold;
-}
-    .logo-fixed {
-  position: fixed;
-  bottom: 50px;
-  right: 50px;
-  width: 250px; /* Ajusta el tamaño si es necesario */
-  height: auto;
-  z-index: 1000;
-  opacity: 0.9;
-}
-.container {
-  max-width: 1000px;
-  margin: 0 auto; /* Esto centra horizontalmente */
-  text-align: center; 
-}
-
-.presentacion-formulario {
-  color: #000000;
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  text-align: center; 
-  line-height: 150%;     /* 150% del tamaño de fuente */
-  
-}
-
-.titulo-formulario {
-  color: #29ac97;
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  text-align: center; 
-  line-height: 250%;     /* 150% del tamaño de fuente */
-}
-
-.titulo-panel {
-  color: #000000;
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  text-align: center; 
-  line-height: 150%;     /* 150% del tamaño de fuente */
-}
-
-.subtitulo {
-  font-weight: bold;
-  justify-content: center;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  text-align: center; 
-  line-height: 700%;     /* 150% del tamaño de fuente */
-}
-
-.botones-usuario {
-  display: flex;
-  justify-content: center;
-  gap: 75px;
-  flex-wrap: wrap;
-}
-
-.botones-usuario button {
-  min-width: 150px;
-}
-
-
   </style>
 </head>
 <body>
-
-    <div class="container"></div>
-        <h1 class="presentacion-formulario" style="color: #29ac97;">Aplicativo Web Scope 3 - By Comsu Solutions</h1>
+  <h1>Aplicativo Web Scope 3</h1>
   <div id="role-selection" class="step active">
     <div class="form-group">
-  <h2 class="titulo-formulario">Formulario Integral de Información para Emisores</h2>
-  <p class="subtitulo">¿Qué tipo de usuario eres?</p>
-  <div class="botones-usuario">
-    <button onclick="selectRole('emisor')">SOY EMISOR</button>
-    <button onclick="selectRole('receptor')">SOY GRAN RECEPTOR</button>
+      <label>¿Qué tipo de usuario eres?</label>
+      <button onclick="selectRole('emisor')">Soy Emisor</button>
+      <button onclick="selectRole('receptor')">Soy Gran Receptor</button>
+    </div>
   </div>
+  <div id="emisor-user-selection" class="step">
+  <h2>¿Eres un nuevo usuario o ya estás registrado?</h2>
+  <button onclick="mostrarFormularioNuevoUsuario()">Usuario nuevo</button>
+  <button onclick="mostrarFormularioUsuarioRegistrado()">Usuario registrado</button>
+  <br><br>
+  <button onclick="volverAlMenu()">Volver al menú principal</button>
 </div>
+
+<div id="nuevo-usuario-form" class="step">
+  <h3>Registro de nueva empresa emisora</h3>
+  <div class="form-group">
+    <label for="nuevaEmpresa">Nombre de la nueva empresa</label>
+    <input type="text" id="nuevaEmpresa" required />
   </div>
+  <button onclick="registrarNuevaEmpresa()">Siguiente</button>
+  <button type="button" onclick="volverAlMenu()">Volver al menú principal</button>
+</div>
+
+<div id="seleccionar-usuario-registrado" class="step">
+  <h3>Selecciona tu empresa</h3>
+  <div class="form-group">
+    <select id="empresaSeleccionada"></select>
+  </div>
+  <button onclick="continuarComoEmpresaRegistrada()">Siguiente</button>
+</div>
+
   <div id="emisor-form" class="step">
-    <h1 class ="titulo-formulario">Formulario Integral de Información para Emisores</h1>
-    <h2 class="titulo-panel">Panel de emisor</h2>
+    <h2>Registro de Actividad</h2>
     <form id="actividad-form">
       <div class="form-group">
         <label for="empresa">Nombre de la empresa</label>
         <input type="text" id="empresa" required />
       </div>
       <div class="form-group">
-        <label for="empresa_receptora">Empresa a la que se reporta (Gran Receptor)</label>
-         <input type="text" id="empresa_receptora" required />
+        <label for="empresaReceptora">Empresa a la que se reporta</label>
+        <input type="text" id="empresaReceptora" required />
       </div>
-
       <div class="form-group">
         <label for="actividad">Selecciona una actividad de Scope 3</label>
         <select id="actividad" required onchange="mostrarFormularioDinamico(this.value)">
@@ -136,17 +82,17 @@
     <button onclick="volverAlMenu()">Volver al menú principal</button>
   </div>
   <div id="receptor-panel" class="step">
-     <h2 class="titulo-panel">Panel del Gran Receptor</h2>
+    <h2>Panel del Gran Receptor</h2>
     <div class="form-group">
-     <label for="filtroEmpresaReceptora">Elige tu empresa</label>
-      <select id="filtroEmpresaReceptora" onchange="renderReceptorData()">
-      <option value="">Todas</option>
-    </select>
+      <label for="filtroEmpresaReceptora">Filtrar por mi empresa receptora</label>
+      <select id="filtroEmpresaReceptora" onchange="renderReceptorData(); renderCharts();">
+        <option value="">Superusuario</option>
+      </select>
     </div>
-        <table class="data-table">
+    <table class="data-table">
       <thead>
         <tr>
-          <th>Empresa Emisora</th>
+          <th>Empresa</th>
           <th>Empresa Receptora</th>
           <th>Actividad</th>
           <th>Tipo Transporte</th>
@@ -162,53 +108,108 @@
       <tbody id="receptor-data"></tbody>
     </table>
     <div class="chart-container">
-      <canvas id="graficoTransporte"></canvas>
-      <div class="legend-box" id="legendTransporte"></div>
-    </div>
-    <div class="chart-container">
+      <canvas id="graficoKmRecorridos"></canvas>
+<canvas id="graficoKgTransportados"></canvas>
       <canvas id="graficoResiduos"></canvas>
-      <div class="legend-box" id="legendResiduos"></div>
-    </div>
+          </div>
     <button onclick="volverAlMenu()">Volver al menú principal</button>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-    function selectRole(role) {
-      document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
-      if (role === 'emisor') {
-        document.getElementById('emisor-form').classList.add('active');
-      } else {
-        document.getElementById('receptor-panel').classList.add('active');
-        renderReceptorData();
-        renderCharts();
-      }
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+      const mesSelect = document.getElementById("mes");
+      meses.forEach((mes) => {
+        const option = document.createElement("option");
+        option.value = mes;
+        option.text = mes;
+        mesSelect.appendChild(option);
+      });
+    });
+
+function selectRole(role) {
+  document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+  if (role === 'emisor') {
+    document.getElementById('emisor-user-selection').classList.add('active');
+  } else {
+    document.getElementById('receptor-panel').classList.add('active');
+    updateFiltroEmpresas();
+    renderReceptorData();
+    renderCharts();
+  }
+}
+
+
+    function mostrarFormularioNuevoUsuario() {
+  mostrarSoloPaso('nuevo-usuario-form');
+}
+
+function mostrarFormularioUsuarioRegistrado() {
+  const select = document.getElementById('empresaSeleccionada');
+  const empresas = getEmpresasEmisoras();
+  select.innerHTML = '';
+  empresas.forEach(nombre => {
+    const option = document.createElement('option');
+    option.value = nombre;
+    option.textContent = nombre;
+    select.appendChild(option);
+  });
+  mostrarSoloPaso('seleccionar-usuario-registrado');
+}
+
+function registrarNuevaEmpresa() {
+  const nuevaEmpresa = document.getElementById('nuevaEmpresa').value.trim();
+  if (!nuevaEmpresa) return alert('Ingresa el nombre de la empresa');
+  const empresas = getEmpresasEmisoras();
+  if (!empresas.includes(nuevaEmpresa)) {
+    empresas.push(nuevaEmpresa);
+    localStorage.setItem('empresasEmisoras', JSON.stringify(empresas));
+  }
+  sessionStorage.setItem('empresaActual', nuevaEmpresa);
+  mostrarSoloPaso('emisor-form');
+  document.getElementById('empresa').value = nuevaEmpresa;
+}
+
+function continuarComoEmpresaRegistrada() {
+  const seleccionada = document.getElementById('empresaSeleccionada').value;
+  sessionStorage.setItem('empresaActual', seleccionada);
+  mostrarSoloPaso('emisor-form');
+  document.getElementById('empresa').value = seleccionada;
+}
+
+function getEmpresasEmisoras() {
+  return JSON.parse(localStorage.getItem('empresasEmisoras') || '[]');
+}
+
+function mostrarSoloPaso(id) {
+  document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
     function volverAlMenu() {
       document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
       document.getElementById('role-selection').classList.add('active');
     }
 
-    function mostrarFormularioDinamico(actividad) {
+    function mostrarFormularioDinamico(valor) {
       const contenedor = document.getElementById('form-dinamico');
       contenedor.innerHTML = '';
-      if (actividad === 'transporte') {
+      if (valor === 'transporte') {
         contenedor.innerHTML = `
           <div class="form-group">
-            <label for="tipo_transporte">Tipo de transporte</label>
-            <select id="tipo_transporte">
-              <option value="Terrestre">Terrestre</option>
-              <option value="Aéreo">Aéreo</option>
-              <option value="Marítimo">Marítimo</option>
+            <label for="tipoTransporte">Tipo de transporte</label>
+            <select id="tipoTransporte" required>
+              <option value="camión">Camión</option>
+              <option value="tren">Tren</option>
+              <option value="barco">Barco</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="direccion_transporte">Dirección (Upstream/Downstream)</label>
-            <select id="direccion_transporte">
-              <option value="Upstream">Upstream</option>
-              <option value="Downstream">Downstream</option>
+            <label for="direccionTransporte">Dirección</label>
+            <select id="direccionTransporte" required>
+              <option value="upstream">Upstream</option>
+              <option value="downstream">Downstream</option>
             </select>
           </div>
           <div class="form-group">
@@ -216,40 +217,39 @@
             <input type="number" id="distancia" required />
           </div>
           <div class="form-group">
-            <label for="peso">Carga transportada (kg)</label>
-            <input type="number" id="peso" required />
+            <label for="carga">Carga (kg)</label>
+            <input type="number" id="carga" required />
           </div>
         `;
-      } else if (actividad === 'residuos') {
+      } else if (valor === 'residuos') {
         contenedor.innerHTML = `
           <div class="form-group">
-            <label for="tipo_residuo">Tipo de residuo</label>
-            <select id="tipo_residuo">
-              <option value="Orgánico">Orgánico</option>
-              <option value="Plástico">Plástico</option>
-              <option value="Peligroso">Peligroso</option>
+            <label for="tipoResiduo">Tipo de residuo</label>
+            <select id="tipoResiduo" required>
+              <option value="orgánico">Orgánico</option>
+              <option value="inorgánico">Inorgánico</option>
+              <option value="peligroso">Peligroso</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="cantidad">Cantidad generada (kg)</label>
-            <input type="number" id="cantidad" required />
+            <label for="cantidadResiduo">Cantidad (kg)</label>
+            <input type="number" id="cantidadResiduo" required />
           </div>
         `;
       }
     }
 
-    function renderMeses() {
-      const select = document.getElementById('mes');
-      meses.forEach((mes, i) => {
+    function updateFiltroEmpresas() {
+      const registros = getRegistros();
+      const select = document.getElementById('filtroEmpresaReceptora');
+      const empresas = [...new Set(registros.map(r => r.empresaReceptora).filter(Boolean))];
+      select.innerHTML = '<option value="">Superusuario</option>';
+      empresas.forEach(e => {
         const option = document.createElement('option');
-        option.value = i + 1;
-        option.textContent = mes;
+        option.value = e;
+        option.textContent = e;
         select.appendChild(option);
       });
-    }
-  
-    function getMonthName(index) {
-      return meses[parseInt(index) - 1];
     }
 
     function getRegistros() {
@@ -261,171 +261,144 @@
     }
 
     function eliminarRegistro(index) {
-      const registros = getRegistros();
-      registros.splice(index, 1);
-      setRegistros(registros);
-      renderReceptorData();
-      renderCharts();
-    }
-
-    function toggleDataset(chart, index, checkbox) {
-      chart.getDatasetMeta(index).hidden = !checkbox.checked;
-      chart.update();
-    }
-
-    function createLegend(chart, containerId) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
-      chart.data.datasets.forEach((ds, i) => {
-        const label = document.createElement('label');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = true;
-        checkbox.onchange = () => toggleDataset(chart, i, checkbox);
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(' ' + ds.label));
-        container.appendChild(label);
-        container.appendChild(document.createElement('br'));
-      });
+      if (confirm('¿Estás seguro de que deseas eliminar este registro?')) {
+        const registros = getRegistros();
+        registros.splice(index, 1);
+        setRegistros(registros);
+        renderReceptorData();
+        renderCharts();
+      }
     }
 
     function renderReceptorData() {
-  const tbody = document.getElementById('receptor-data');
-  const filtro = document.getElementById('filtroEmpresaReceptora').value;
-  tbody.innerHTML = '';
-  const registros = getRegistros();
+      const registros = getRegistros();
+      const filtro = document.getElementById('filtroEmpresaReceptora').value;
+      const tbody = document.getElementById('receptor-data');
+      tbody.innerHTML = '';
+      const filtrados = filtro ? registros.filter(r => r.empresaReceptora === filtro) : registros;
+      filtrados.forEach((data, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${data.empresa || '-'}</td>
+          <td>${data.empresaReceptora || '-'}</td>
+          <td>${data.actividad || '-'}</td>
+          <td>${data.tipoTransporte || '-'}</td>
+          <td>${data.direccionTransporte || '-'}</td>
+          <td>${data.distancia ? Number(data.distancia).toLocaleString() : '-'}</td>
+          <td>${data.carga ? Number(data.carga).toLocaleString() : '-'}</td>
+          <td>${data.tipoResiduo || '-'}</td>
+          <td>${data.cantidadResiduo ? Number(data.cantidadResiduo).toLocaleString() : '-'}</td>
+          <td>${data.mes || '-'}</td>
+          <td><button onclick="eliminarRegistro(${index})">Eliminar</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
 
-  const empresasReceptoras = [...new Set(registros.map(r => r.empresa_receptora))];
-  const filtroSelect = document.getElementById('filtroEmpresaReceptora');
-  filtroSelect.innerHTML = '<option value="">-- Todas --</option>';
-  empresasReceptoras.forEach(emp => {
-    const option = document.createElement('option');
-    option.value = emp;
-    option.textContent = emp;
-    filtroSelect.appendChild(option);
+   function renderCharts() {
+  const registros = getRegistros();
+  const filtro = document.getElementById('filtroEmpresaReceptora').value;
+  const filtrados = filtro ? registros.filter(r => r.empresaReceptora === filtro) : registros;
+
+  const empresas = [...new Set(filtrados.map(r => r.empresa))];
+
+  const colores = [
+    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+    '#FF9F40', '#8B0000', '#228B22', '#00008B', '#8B008B'
+  ];
+
+  function crearDatasetsPorEmpresa(key, esTransporte = false) {
+    return empresas.map((empresa, i) => {
+      const dataPorMes = meses.map(mes => {
+        const registrosEmpresaMes = filtrados.filter(r => r.empresa === empresa && r.mes === mes);
+        if (esTransporte) {
+          return registrosEmpresaMes.reduce((sum, r) => sum + parseFloat(r[key] || 0), 0);
+        } else {
+          return registrosEmpresaMes.reduce((sum, r) => sum + parseFloat(r[key] || 0), 0);
+        }
+      });
+      return {
+        label: empresa,
+        data: dataPorMes,
+        backgroundColor: colores[i % colores.length]
+      };
+    });
+  }
+
+  // Destruir gráficos anteriores si existen
+  if (window.chartResiduos) window.chartResiduos.destroy();
+  if (window.chartKm) window.chartKm.destroy();
+  if (window.chartKg) window.chartKg.destroy();
+
+  // Gráfico residuos
+  const ctxResiduos = document.getElementById('graficoResiduos').getContext('2d');
+  window.chartResiduos = new Chart(ctxResiduos, {
+    type: 'bar',
+    data: {
+      labels: meses,
+      datasets: crearDatasetsPorEmpresa('cantidadResiduo')
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Residuos generados (kg)' },
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'kg' } }
+      }
+    }
   });
 
-  const registrosFiltrados = filtro ? registros.filter(r => r.empresa_receptora === filtro) : registros;
+  // Gráfico kilómetros recorridos
+  const ctxKm = document.getElementById('graficoKmRecorridos').getContext('2d');
+  window.chartKm = new Chart(ctxKm, {
+    type: 'bar',
+    data: {
+      labels: meses,
+      datasets: crearDatasetsPorEmpresa('distancia', true)
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Kilómetros recorridos' },
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'km' } }
+      }
+    }
+  });
 
-  const formatNumber = (value) => {
-    if (!value || isNaN(value)) return '-';
-    return new Intl.NumberFormat('es-CO').format(parseFloat(value));
-  };
-
-  registrosFiltrados.forEach((reg, index) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${reg.empresa || '-'}</td>
-      <td>${reg.empresa_receptora || '-'}</td>
-      <td>${reg.actividad}</td>
-      <td>${reg.tipo_transporte || '-'}</td>
-      <td>${reg.direccion_transporte || '-'}</td>
-      <td>${formatNumber(reg.distancia)}</td>
-      <td>${formatNumber(reg.peso)}</td>
-      <td>${reg.tipo_residuo || '-'}</td>
-      <td>${formatNumber(reg.cantidad)}</td>
-      <td>${getMonthName(reg.mes)}</td>
-      <td><button onclick="eliminarRegistro(${index})">Eliminar</button></td>
-    `;
-    tbody.appendChild(tr);
+  // Gráfico kilogramos transportados
+  const ctxKg = document.getElementById('graficoKgTransportados').getContext('2d');
+  window.chartKg = new Chart(ctxKg, {
+    type: 'bar',
+    data: {
+      labels: meses,
+      datasets: crearDatasetsPorEmpresa('carga', true)
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Carga transportada (kg)' },
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'kg' } }
+      }
+    }
   });
 }
-
-    function renderCharts() {
-      const registros = getRegistros();
-      const mesesEtiquetas = meses;
-
-      const empresas = [...new Set(registros.map(r => r.empresa))];
-      const colores = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
-
-      const transporteDatasets = empresas.map((empresa, i) => {
-        const dataKg = Array(12).fill(0);
-        const dataKm = Array(12).fill(0);
-        registros.filter(r => r.empresa === empresa && r.actividad === 'transporte').forEach(r => {
-          const mesIdx = parseInt(r.mes) - 1;
-          dataKg[mesIdx] += parseFloat(r.peso) || 0;
-          dataKm[mesIdx] += parseFloat(r.distancia) || 0;
-        });
-        return [
-          { label: `${empresa} (kg)`, data: dataKg, yAxisID: 'y1', backgroundColor: colores[i % colores.length], type: 'bar' },
-          { label: `${empresa} (km)`, data: dataKm, yAxisID: 'y2', borderColor: colores[i % colores.length], backgroundColor: 'transparent', type: 'line' }
-        ];
-      }).flat();
-
-      const residuosPorTipo = {};
-      registros.filter(r => r.actividad === 'residuos').forEach(r => {
-        const key = `${r.empresa} - ${r.tipo_residuo}`;
-        const mesIndex = parseInt(r.mes) - 1;
-        if (!residuosPorTipo[key]) residuosPorTipo[key] = Array(12).fill(0);
-        residuosPorTipo[key][mesIndex] += parseFloat(r.cantidad) || 0;
-      });
-
-      const residuosDatasets = Object.entries(residuosPorTipo).map(([label, data], i) => ({
-        label,
-        data,
-        borderColor: colores[i % colores.length],
-        backgroundColor: colores[i % colores.length],
-        fill: false,
-        tension: 0.3
-      }));
-
-      if (window.transporteChart) window.transporteChart.destroy();
-      if (window.residuosChart) window.residuosChart.destroy();
-
-      const ctx1 = document.getElementById('graficoTransporte').getContext('2d');
-      window.transporteChart = new Chart(ctx1, {
-        data: {
-          labels: mesesEtiquetas,
-          datasets: transporteDatasets
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y1: { beginAtZero: true, position: 'left', title: { display: true, text: 'Kg' } },
-            y2: { beginAtZero: true, position: 'right', title: { display: true, text: 'Km' }, grid: { drawOnChartArea: false } },
-            x: {
-              title: { display: true, text: 'Mes' },
-              ticks: {
-                autoSkip: false
-              }
-            }
-          }
-        }
-      });
-
-      const ctx2 = document.getElementById('graficoResiduos').getContext('2d');
-      window.residuosChart = new Chart(ctx2, {
-        type: 'line',
-        data: {
-          labels: mesesEtiquetas,
-          datasets: residuosDatasets
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: { beginAtZero: true, title: { display: true, text: 'Cantidad (kg)' } },
-            x: {
-              title: { display: true, text: 'Mes' },
-              ticks: {
-                autoSkip: false
-              }
-            }
-          }
-        }
-      });
-
-      createLegend(window.transporteChart, 'legendTransporte');
-      createLegend(window.residuosChart, 'legendResiduos');
-    }
 
     document.getElementById('actividad-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const data = {
         empresa: document.getElementById('empresa').value,
-        empresa_receptora: document.getElementById('empresa_receptora').value,
+        empresaReceptora: document.getElementById('empresaReceptora').value,
         actividad: document.getElementById('actividad').value,
         mes: document.getElementById('mes').value
-    };
+      };
       document.querySelectorAll('#form-dinamico input, #form-dinamico select').forEach(el => {
         data[el.id] = el.value;
       });
@@ -436,10 +409,6 @@
       document.getElementById('actividad-form').reset();
       document.getElementById('form-dinamico').innerHTML = '';
     });
-
-    renderMeses();
   </script>
-    </div>
-    <img src="logo.jpg" alt="Logo" class="logo-fixed">
 </body>
 </html>
